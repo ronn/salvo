@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo.controller;
 
+import com.codeoftheweb.salvo.entity.Game;
+import com.codeoftheweb.salvo.entity.GamePlayer;
 import com.codeoftheweb.salvo.repo.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +24,37 @@ public class SalvoController {
 
     @RequestMapping("/games")
     public List<HashMap<String, Object>> getGames(){
-
         return gameRepo.findAll()
                 .stream()
-                .map(game -> new HashMap<String, Object>(){{
+                .map(game -> getGameMap(game, getGamePlayers(game)))
+                .collect(Collectors.toList());
+    }
+
+    private List<HashMap<String, Object>> getGamePlayers(Game game) {
+        return game.getGamePlayers().stream()
+                .map(gamePlayer -> getGamePlayerMap(gamePlayer, getPlayerMap(gamePlayer)))
+                .collect(Collectors.toList());
+    }
+
+    private HashMap<String, Object> getGameMap(Game game, List<HashMap<String, Object>> gamePlayersMap) {
+        return new HashMap<String, Object>(){{
                     put("id", game.getId());
                     put("created", game.getCreationDate());
-                }})
-                .collect(Collectors.toList());
+                    put("gamePlayers", gamePlayersMap);
+                }};
+    }
+
+    private HashMap<String, Object> getGamePlayerMap(GamePlayer gamePlayer, HashMap<String, Object> player) {
+        return new HashMap<String, Object>() {{
+            put("id", gamePlayer.getId());
+            put("player", player);
+        }};
+    }
+
+    private HashMap<String, Object> getPlayerMap(GamePlayer gamePlayer) {
+        return new HashMap<String, Object>() {{
+            put("id", gamePlayer.getPlayer().getId());
+            put("email", gamePlayer.getPlayer().getUserName());
+        }};
     }
 }

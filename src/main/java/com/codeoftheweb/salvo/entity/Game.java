@@ -37,6 +37,10 @@ public class Game {
         this.gamePlayers.add(gp);
     }
 
+    public List<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
     public List<Player> getPlayers(){
         return this.gamePlayers
                 .stream()
