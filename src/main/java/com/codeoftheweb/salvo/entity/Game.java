@@ -14,7 +14,7 @@ public class Game {
     private Long id;
     private Date creationDate;
 
-    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="game", fetch=FetchType.LAZY)
     private List<GamePlayer> gamePlayers = new ArrayList<>();
 
     public Game() {

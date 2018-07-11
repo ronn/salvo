@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ public class Player {
 
     private String userName;
 
-    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="player", fetch=FetchType.LAZY)
     private List<GamePlayer> gamePlayers = new ArrayList<>();
 
     public Player() {
@@ -37,6 +39,7 @@ public class Player {
         this.gamePlayers.add(gp);
     }
 
+    @JsonIgnore
     public List<Game> getGames(){
         return this.gamePlayers
                 .stream()
