@@ -1,10 +1,10 @@
 package com.codeoftheweb.salvo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Game {
@@ -14,7 +14,8 @@ public class Game {
     private Long id;
     private Date creationDate;
 
-
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    private List<GamePlayer> gamePlayers = new ArrayList<>();
 
     public Game() {
     }
@@ -29,5 +30,17 @@ public class Game {
 
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public void addGamePlayer(GamePlayer gp){
+        gp.setGame(this);
+        this.gamePlayers.add(gp);
+    }
+
+    public List<Player> getPlayers(){
+        return this.gamePlayers
+                .stream()
+                .map(GamePlayer::getPlayer)
+                .collect(Collectors.toList());
     }
 }

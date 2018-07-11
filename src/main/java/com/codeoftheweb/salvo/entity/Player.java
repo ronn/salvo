@@ -1,9 +1,9 @@
 package com.codeoftheweb.salvo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Player {
@@ -13,6 +13,9 @@ public class Player {
     private Long id;
 
     private String userName;
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private List<GamePlayer> gamePlayers = new ArrayList<>();
 
     public Player() {
     }
@@ -27,5 +30,17 @@ public class Player {
 
     public String getUserName() {
         return userName;
+    }
+
+    public void addGamePlayer(GamePlayer gp){
+        gp.setPleayer(this);
+        this.gamePlayers.add(gp);
+    }
+
+    public List<Game> getGames(){
+        return this.gamePlayers
+                .stream()
+                .map(GamePlayer::getGame)
+                .collect(Collectors.toList());
     }
 }
