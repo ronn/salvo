@@ -1,0 +1,12 @@
+# IDEA Ignores #
+################
+*.iml
+*.ipr
+*.iws
+*.bat
+gradle/
+gradlew
+.idea/
+out/
+build/
+local.properties
