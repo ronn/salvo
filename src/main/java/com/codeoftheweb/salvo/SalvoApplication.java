@@ -6,12 +6,12 @@ import com.codeoftheweb.salvo.entity.Player;
 import com.codeoftheweb.salvo.repo.GamePlayerRepository;
 import com.codeoftheweb.salvo.repo.GameRepository;
 import com.codeoftheweb.salvo.repo.PlayerRepository;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,6 +19,7 @@ import java.time.ZoneOffset;
 import java.util.Date;
 
 @SpringBootApplication
+@ComponentScan
 public class SalvoApplication {
 
 	private final PlayerRepository playerRepo;
@@ -63,7 +64,6 @@ public class SalvoApplication {
 			gamePlayerRepo.save(gamePlayer3);
 			gamePlayerRepo.save(gamePlayer4);
 			gamePlayerRepo.save(gamePlayer5);
-
 		};
 	}
 
