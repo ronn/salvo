@@ -1,0 +1,10 @@
+# IDEA Ignores #
+################
+*.iml
+*.ipr
+*.iws
+*.bat
+.idea/
+out/
+build/
+local.properties
