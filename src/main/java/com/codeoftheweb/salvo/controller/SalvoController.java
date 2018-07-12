@@ -41,15 +41,29 @@ public class SalvoController {
                 .map(gamePlayer -> {
                     final List<HashMap<String, Object>> ships = getShipsMap(gamePlayer);
 
+                    final List<HashMap<String, Object>> salvoes = getSalvoesMap(gamePlayer);
+
                     final Game game = gamePlayer.getGame();
 
                     HashMap<String, Object> gameMap = getGameMap(game, getGamePlayers(game));
 
                     gameMap.put("ships", ships);
+                    gameMap.put("salvoes", salvoes);
 
                     return gameMap;
                 })
                 .orElse(null);
+    }
+
+    private List<HashMap<String, Object>> getSalvoesMap(GamePlayer gamePlayer) {
+        return gamePlayer.getSalvos()
+                .stream()
+                .map(salvo -> new HashMap<String, Object>() {{
+                    put("turn", salvo.getTurn());
+                    put("player", salvo.getGamePlayer().getPlayer().getId());
+                    put("location", salvo.getLocations());
+                }})
+                .collect(Collectors.toList());
     }
 
     private List<HashMap<String, Object>> getShipsMap(GamePlayer gamePlayer) {
