@@ -4,9 +4,11 @@ import com.codeoftheweb.salvo.entity.Game;
 import com.codeoftheweb.salvo.entity.GamePlayer;
 import com.codeoftheweb.salvo.repo.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.websocket.server.PathParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +30,13 @@ public class SalvoController {
                 .stream()
                 .map(game -> getGameMap(game, getGamePlayers(game)))
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping("/games/game_view/{id}")
+    public HashMap<String, Object> getGame(@PathVariable("id") Long id){
+        return gameRepo.findById(id)
+                .map(game -> getGameMap(game, getGamePlayers(game)))
+                .orElse(null);
     }
 
     private List<HashMap<String, Object>> getGamePlayers(Game game) {
