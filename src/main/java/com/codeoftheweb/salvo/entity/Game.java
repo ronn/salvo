@@ -17,6 +17,9 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.LAZY)
     private List<GamePlayer> gamePlayers = new ArrayList<>();
 
+    @OneToMany(mappedBy="game", fetch=FetchType.LAZY)
+    private List<Score> scores = new ArrayList<>();
+
     public Game() {
     }
 
@@ -46,5 +49,14 @@ public class Game {
                 .stream()
                 .map(GamePlayer::getPlayer)
                 .collect(Collectors.toList());
+    }
+
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public void addScore(Score score){
+        score.setGame(this);
+        scores.add(score);
     }
 }

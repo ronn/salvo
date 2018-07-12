@@ -26,6 +26,9 @@ public class Player {
         this.userName = userName;
     }
 
+    @OneToMany(mappedBy="player", fetch=FetchType.LAZY)
+    private List<Score> scores = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -34,9 +37,8 @@ public class Player {
         return userName;
     }
 
-    public void addGamePlayer(GamePlayer gp){
-        gp.setPleayer(this);
-        this.gamePlayers.add(gp);
+    public List<Score> getScores() {
+        return scores;
     }
 
     @JsonIgnore
@@ -45,5 +47,15 @@ public class Player {
                 .stream()
                 .map(GamePlayer::getGame)
                 .collect(Collectors.toList());
+    }
+
+    public void addGamePlayer(GamePlayer gp){
+        gp.setPleayer(this);
+        this.gamePlayers.add(gp);
+    }
+
+    public void addScore(Score score){
+        score.setPlayer(this);
+        scores.add(score);
     }
 }
