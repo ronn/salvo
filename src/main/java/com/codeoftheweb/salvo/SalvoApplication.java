@@ -1,13 +1,7 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.entity.Game;
-import com.codeoftheweb.salvo.entity.GamePlayer;
-import com.codeoftheweb.salvo.entity.Player;
-import com.codeoftheweb.salvo.entity.Ship;
-import com.codeoftheweb.salvo.repo.GamePlayerRepository;
-import com.codeoftheweb.salvo.repo.GameRepository;
-import com.codeoftheweb.salvo.repo.PlayerRepository;
-import com.codeoftheweb.salvo.repo.ShipRepository;
+import com.codeoftheweb.salvo.entity.*;
+import com.codeoftheweb.salvo.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -30,13 +24,15 @@ public class SalvoApplication {
 	private final GameRepository gameRepo;
 	private final GamePlayerRepository gamePlayerRepo;
 	private final ShipRepository shipRepo;
+	private final SalvoRepository salvoRepo;
 
 	@Autowired
-	public SalvoApplication(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo) {
+	public SalvoApplication(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
 		this.playerRepo = playerRepo;
 		this.gameRepo = gameRepo;
 		this.gamePlayerRepo = gamePlayerRepo;
 		this.shipRepo = shipRepo;
+		this.salvoRepo = salvoRepo;
 	}
 
 	public static void main(String[] args) {
@@ -68,6 +64,17 @@ public class SalvoApplication {
 			final Ship ship9 = shipRepo.save(new Ship(getLocations(), "Battle"));
 			final Ship ship = shipRepo.save(new Ship(getLocations(), "Battle"));
 
+			final Salvo salvo = salvoRepo.save(new Salvo(1));
+			final Salvo salvo1 = salvoRepo.save(new Salvo(1));
+			final Salvo salvo2 = salvoRepo.save(new Salvo(2));
+			final Salvo salvo3 = salvoRepo.save(new Salvo(2));
+			final Salvo salvo4 = salvoRepo.save(new Salvo(3));
+			final Salvo salvo5 = salvoRepo.save(new Salvo(3));
+			final Salvo salvo6 = salvoRepo.save(new Salvo(4));
+			final Salvo salvo7 = salvoRepo.save(new Salvo(4));
+			final Salvo salvo8 = salvoRepo.save(new Salvo(5));
+			final Salvo salvo9 = salvoRepo.save(new Salvo(5));
+
 			final GamePlayer gamePlayer = new GamePlayer(new Date(), player, game);
 			final GamePlayer gamePlayer1 = new GamePlayer(new Date(), player1, game1);
 			final GamePlayer gamePlayer2 = new GamePlayer(new Date(), player2, game2);
@@ -86,6 +93,17 @@ public class SalvoApplication {
 			gamePlayer2.addShip(ship9);
 			gamePlayer5.addShip(ship);
 
+			gamePlayer5.addSalvo(salvo1);
+			gamePlayer4.addSalvo(salvo2);
+			gamePlayer3.addSalvo(salvo3);
+			gamePlayer2.addSalvo(salvo4);
+			gamePlayer1.addSalvo(salvo5);
+			gamePlayer2.addSalvo(salvo6);
+			gamePlayer3.addSalvo(salvo7);
+			gamePlayer4.addSalvo(salvo8);
+			gamePlayer5.addSalvo(salvo9);
+			gamePlayer1.addSalvo(salvo);
+
 			gamePlayerRepo.save(gamePlayer);
 			gamePlayerRepo.save(gamePlayer1);
 			gamePlayerRepo.save(gamePlayer2);
@@ -103,25 +121,36 @@ public class SalvoApplication {
 			shipRepo.save(ship8);
 			shipRepo.save(ship9);
 			shipRepo.save(ship);
+
+			salvoRepo.save(salvo);
+			salvoRepo.save(salvo1);
+			salvoRepo.save(salvo2);
+			salvoRepo.save(salvo3);
+			salvoRepo.save(salvo4);
+			salvoRepo.save(salvo5);
+			salvoRepo.save(salvo6);
+			salvoRepo.save(salvo7);
+			salvoRepo.save(salvo8);
+			salvoRepo.save(salvo9);
 		};
 	}
 
 	private List<String> getLocations(){
 		return Arrays.asList(
-				"F1",
+				"A1",
 				"A2",
-				"D4",
-				"S3",
-				"T5",
+				"A4",
+				"A3",
+				"5",
 				"F6",
-				"D7",
-				"S9",
-				"A8",
-				"S6",
-				"E4",
-				"D3",
-				"S2",
-				"A1"
+				"C7",
+				"C9",
+				"C8",
+				"H6",
+				"H4",
+				"H3",
+				"H2",
+				"H1"
 		);
 	}
 }
