@@ -1,5 +1,8 @@
 package com.codeoftheweb.salvo.entity;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +27,10 @@ public class GamePlayer {
 
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     private List<Ship> ships = new ArrayList<>();
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy="gamePlayer")
+    private List<Salvo> salvos = new ArrayList<>();
 
     public GamePlayer() {
     }
@@ -62,8 +69,17 @@ public class GamePlayer {
         return ships;
     }
 
+    public List<Salvo> getSalvos() {
+        return salvos;
+    }
+
     public void addShip(Ship ship){
         ship.setGamePlayer(this);
         this.ships.add(ship);
+    }
+
+    public void addSalvo(Salvo salvo){
+        salvo.setGamePlayer(this);
+        this.salvos.add(salvo);
     }
 }
