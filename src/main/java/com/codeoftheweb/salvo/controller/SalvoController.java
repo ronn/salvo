@@ -30,29 +30,30 @@ public class SalvoController {
     public List<HashMap<String, Object>> getGames(){
         return gameRepo.findAll()
                 .stream()
-                .map(game -> getGameMap(game, getGamePlayers(game)))
+                .map(this::getGameMap)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping("/games/game_view/{id}")
     public HashMap<String, Object> getGame(@PathVariable("id") Long id){
-
         return gamePlayerRepo.findById(id)
-                .map(gamePlayer -> {
-                    final List<HashMap<String, Object>> ships = getShipsMap(gamePlayer);
-
-                    final List<HashMap<String, Object>> salvoes = getSalvoesMap(gamePlayer);
-
-                    final Game game = gamePlayer.getGame();
-
-                    HashMap<String, Object> gameMap = getGameMap(game, getGamePlayers(game));
-
-                    gameMap.put("ships", ships);
-                    gameMap.put("salvoes", salvoes);
-
-                    return gameMap;
-                })
+                .map(this::getGameMapById)
                 .orElse(null);
+    }
+
+    private HashMap<String, Object> getGameMapById(GamePlayer gamePlayer) {
+        final List<HashMap<String, Object>> ships = getShipsMap(gamePlayer);
+
+        final List<HashMap<String, Object>> salvoes = getSalvoesMap(gamePlayer);
+
+        final Game game = gamePlayer.getGame();
+
+        HashMap<String, Object> gameMap = getGameMap(game);
+
+        gameMap.put("ships", ships);
+        gameMap.put("salvoes", salvoes);
+
+        return gameMap;
     }
 
     private List<HashMap<String, Object>> getSalvoesMap(GamePlayer gamePlayer) {
@@ -74,18 +75,18 @@ public class SalvoController {
                 }}).collect(Collectors.toList());
     }
 
+    private HashMap<String, Object> getGameMap(Game game) {
+        return new HashMap<String, Object>(){{
+                    put("id", game.getId());
+                    put("created", game.getCreationDate());
+                    put("gamePlayers", getGamePlayers(game));
+                }};
+    }
+
     private List<HashMap<String, Object>> getGamePlayers(Game game) {
         return game.getGamePlayers().stream()
                 .map(gamePlayer -> getGamePlayerMap(gamePlayer, getPlayerMap(gamePlayer)))
                 .collect(Collectors.toList());
-    }
-
-    private HashMap<String, Object> getGameMap(Game game, List<HashMap<String, Object>> gamePlayersMap) {
-        return new HashMap<String, Object>(){{
-                    put("id", game.getId());
-                    put("created", game.getCreationDate());
-                    put("gamePlayers", gamePlayersMap);
-                }};
     }
 
     private HashMap<String, Object> getGamePlayerMap(GamePlayer gamePlayer, HashMap<String, Object> player) {
