@@ -1,7 +1,9 @@
 package com.codeoftheweb.salvo.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class GamePlayer {
@@ -19,6 +21,9 @@ public class GamePlayer {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
+
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
+    private List<Ship> ships = new ArrayList<>();
 
     public GamePlayer() {
     }
@@ -51,5 +56,14 @@ public class GamePlayer {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public List<Ship> getShips() {
+        return ships;
+    }
+
+    public void addShip(Ship ship){
+        ship.setGamePlayer(this);
+        this.ships.add(ship);
     }
 }
