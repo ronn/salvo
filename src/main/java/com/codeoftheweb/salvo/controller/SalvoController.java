@@ -2,13 +2,13 @@ package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.entity.Game;
 import com.codeoftheweb.salvo.entity.GamePlayer;
+import com.codeoftheweb.salvo.repo.GamePlayerRepository;
 import com.codeoftheweb.salvo.repo.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.websocket.server.PathParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 public class SalvoController {
 
     private final GameRepository gameRepo;
+    private final GamePlayerRepository gamePlayerRepo;
 
     @Autowired
-    public SalvoController(GameRepository gameRepo) {
+    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo) {
         this.gameRepo = gameRepo;
+        this.gamePlayerRepo = gamePlayerRepo;
     }
 
     @RequestMapping("/games")
@@ -34,9 +36,28 @@ public class SalvoController {
 
     @RequestMapping("/games/game_view/{id}")
     public HashMap<String, Object> getGame(@PathVariable("id") Long id){
-        return gameRepo.findById(id)
-                .map(game -> getGameMap(game, getGamePlayers(game)))
+
+        return gamePlayerRepo.findById(id)
+                .map(gamePlayer -> {
+                    final List<HashMap<String, Object>> ships = getShipsMap(gamePlayer);
+
+                    final Game game = gamePlayer.getGame();
+
+                    HashMap<String, Object> gameMap = getGameMap(game, getGamePlayers(game));
+
+                    gameMap.put("ships", ships);
+
+                    return gameMap;
+                })
                 .orElse(null);
+    }
+
+    private List<HashMap<String, Object>> getShipsMap(GamePlayer gamePlayer) {
+        return gamePlayer.getShips().stream()
+                .map(ship -> new HashMap<String, Object>() {{
+                    put("type", ship.getType());
+                    put("locations", ship.getLocations());
+                }}).collect(Collectors.toList());
     }
 
     private List<HashMap<String, Object>> getGamePlayers(Game game) {
