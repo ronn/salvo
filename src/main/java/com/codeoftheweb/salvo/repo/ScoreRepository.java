@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
-public interface ScoreController extends JpaRepository<Score, Long> {
+public interface ScoreRepository extends JpaRepository<Score, Long> {
 }
