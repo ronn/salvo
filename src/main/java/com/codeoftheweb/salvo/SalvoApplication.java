@@ -25,14 +25,16 @@ public class SalvoApplication {
 	private final GamePlayerRepository gamePlayerRepo;
 	private final ShipRepository shipRepo;
 	private final SalvoRepository salvoRepo;
+	private final ScoreRepository scoreRepo;
 
 	@Autowired
-	public SalvoApplication(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
+	public SalvoApplication(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo, ScoreRepository scoreRepo) {
 		this.playerRepo = playerRepo;
 		this.gameRepo = gameRepo;
 		this.gamePlayerRepo = gamePlayerRepo;
 		this.shipRepo = shipRepo;
 		this.salvoRepo = salvoRepo;
+		this.scoreRepo = scoreRepo;
 	}
 
 	public static void main(String[] args) {
@@ -52,6 +54,13 @@ public class SalvoApplication {
 			final Game game = gameRepo.save(new Game(Date.from(i)));
 			final Game game1 = gameRepo.save(new Game(Date.from(i.plusSeconds(3600))));
 			final Game game2 = gameRepo.save(new Game(Date.from(i.plusSeconds(7200))));
+
+			scoreRepo.save(new Score(1.0, new Date(), game, player));
+			scoreRepo.save(new Score(0.0, new Date(), game, player1));
+			scoreRepo.save(new Score(0.5, new Date(), game1, player2));
+			scoreRepo.save(new Score(0.5, new Date(), game1, player3));
+			scoreRepo.save(new Score(1.0, new Date(), game2, player));
+			scoreRepo.save(new Score(0.0, new Date(), game2, player3));
 
 			final Ship ship1 = shipRepo.save(new Ship(getLocations(), "Battle"));
 			final Ship ship2 = shipRepo.save(new Ship(getLocations(), "Other"));
