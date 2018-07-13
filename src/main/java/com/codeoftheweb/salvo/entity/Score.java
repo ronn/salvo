@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -44,10 +46,12 @@ public class Score {
         return finishDate;
     }
 
+    @JsonIgnore
     public Game getGame() {
         return game;
     }
 
+    @JsonIgnore
     public Player getPlayer() {
         return player;
     }
