@@ -49,11 +49,6 @@ public class Player {
                 .collect(Collectors.toList());
     }
 
-    public void addGamePlayer(GamePlayer gp){
-        gp.setPleayer(this);
-        this.gamePlayers.add(gp);
-    }
-
     public Score getScore(Game game){
         return scores.stream()
                 .filter(score -> game.getId().equals(score.getGame().getId()))

@@ -32,7 +32,7 @@ public class Salvo {
                 "A2",
                 "A4",
                 "A3",
-                "5",
+                "G5",
                 "F6",
                 "C7",
                 "C9",
@@ -61,7 +61,7 @@ public class Salvo {
         return turn;
     }
 
-    public void setGamePlayer(GamePlayer gamePlayer) {
+    void setGamePlayer(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
     }
 }

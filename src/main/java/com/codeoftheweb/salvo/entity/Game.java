@@ -35,11 +35,6 @@ public class Game {
         return creationDate;
     }
 
-    public void addGamePlayer(GamePlayer gp){
-        gp.setGame(this);
-        this.gamePlayers.add(gp);
-    }
-
     public List<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
@@ -55,7 +50,7 @@ public class Game {
         return scores;
     }
 
-    public void addScore(Score score){
+    void addScore(Score score){
         score.setGame(this);
         scores.add(score);
     }

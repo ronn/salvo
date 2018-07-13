@@ -47,20 +47,15 @@ public class Score {
     }
 
     @JsonIgnore
-    public Game getGame() {
+    Game getGame() {
         return game;
     }
 
-    @JsonIgnore
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setGame(Game game) {
+    void setGame(Game game) {
         this.game = game;
     }
 
-    public void setPlayer(Player player) {
+    void setPlayer(Player player) {
         this.player = player;
     }
 }
