@@ -82,4 +82,8 @@ public class GamePlayer {
         salvo.setGamePlayer(this);
         this.salvos.add(salvo);
     }
+
+    public Score getScore() {
+        return this.player.getScore(this.game);
+    }
 }

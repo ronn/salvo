@@ -54,6 +54,13 @@ public class Player {
         this.gamePlayers.add(gp);
     }
 
+    public Score getScore(Game game){
+        return scores.stream()
+                .filter(score -> game.getId().equals(score.getGame().getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void addScore(Score score){
         score.setPlayer(this);
         scores.add(score);
