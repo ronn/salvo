@@ -93,6 +93,7 @@ public class SalvoController {
         return new HashMap<String, Object>() {{
             put("id", gamePlayer.getId());
             put("player", player);
+            put("score", gamePlayer.getScore());
         }};
     }
 
