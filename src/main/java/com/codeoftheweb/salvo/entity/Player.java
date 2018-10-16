@@ -13,7 +13,6 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
-
     private String userName;
 
     @OneToMany(mappedBy="player", fetch=FetchType.LAZY)
@@ -49,14 +48,14 @@ public class Player {
                 .collect(Collectors.toList());
     }
 
-    public Score getScore(Game game){
+    Score getScore(Game game){
         return scores.stream()
                 .filter(score -> game.getId().equals(score.getGame().getId()))
                 .findFirst()
                 .orElse(null);
     }
 
-    public void addScore(Score score){
+    void addScore(Score score){
         score.setPlayer(this);
         scores.add(score);
     }

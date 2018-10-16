@@ -57,10 +57,6 @@ public class GamePlayer {
         return game;
     }
 
-    void setPleayer(Player player) {
-        this.player = player;
-    }
-
     public List<Ship> getShips() {
         return ships;
     }
