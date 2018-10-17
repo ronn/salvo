@@ -1,11 +1,14 @@
 package com.codeoftheweb.salvo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Player {
@@ -15,6 +18,9 @@ public class Player {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String userName;
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private Set<GamePlayer> gamePlayers = new HashSet<>();
 
     public Player() {
     }
@@ -37,5 +43,18 @@ public class Player {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void addGamePlayer(GamePlayer gp){
+        gp.setPlayer(this);
+        gamePlayers.add(gp);
+    }
+
+    @JsonIgnore
+    public List<Game> getGames(){
+        return gamePlayers
+                .stream()
+                .map(GamePlayer::getGame)
+                .collect(toList());
     }
 }

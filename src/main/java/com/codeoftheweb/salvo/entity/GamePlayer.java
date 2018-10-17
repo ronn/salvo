@@ -4,14 +4,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
 
 @Entity
-public class Game {
+public class GamePlayer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -19,13 +14,18 @@ public class Game {
     private Long id;
     private Date created;
 
-    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
-    private Set<GamePlayer> gamePlayers = new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="game_id")
+    private Game game;
 
-    public Game() {
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="player_id")
+    private Player player;
+
+    public GamePlayer() {
     }
 
-    public Game(Date created) {
+    public GamePlayer(Date created) {
         this.created = created;
     }
 
@@ -45,15 +45,19 @@ public class Game {
         this.created = created;
     }
 
-    public void addGamePlayer(GamePlayer gp){
-        gp.setGame(this);
-        gamePlayers.add(gp);
+    public Game getGame() {
+        return game;
     }
 
-    public List<Player> getPlayers(){
-        return gamePlayers
-                .stream()
-                .map(GamePlayer::getPlayer)
-                .collect(toList());
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }
