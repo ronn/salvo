@@ -15,6 +15,8 @@ Issues:
 I added this in my build.gradle:
 bootRun {
 	sourceResources sourceSets.main
-},
+}
+
+- M4T2S4 => I had to add @RestController anotation to my controller class instead of @Controller
 
 - I  had to add @ComponentScan in Application class
