@@ -50,6 +50,10 @@ public class Game {
         gamePlayers.add(gp);
     }
 
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
     public List<Player> getPlayers(){
         return gamePlayers
                 .stream()

@@ -17,7 +17,7 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private String userName;
+    private String emal;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
@@ -26,7 +26,7 @@ public class Player {
     }
 
     public Player(String userName) {
-        this.userName = userName;
+        this.emal = userName;
     }
 
     public Long getId() {
@@ -37,12 +37,12 @@ public class Player {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEmal() {
+        return emal;
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.emal = userName;
     }
 
     public void addGamePlayer(GamePlayer gp){
