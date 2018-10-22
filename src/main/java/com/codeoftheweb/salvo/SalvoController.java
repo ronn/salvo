@@ -38,7 +38,7 @@ public class SalvoController {
         return new HashMap<String, Object>(){{
             put("id", game.getId());
             put("created", game.getCreated());
-            put("gamePlayer", getListOfMapsFrom(game.getGamePlayers()));
+            put("gamePlayers", getListOfMapsFrom(game.getGamePlayers()));
         }};
     }
 

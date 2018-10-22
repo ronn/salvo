@@ -41,10 +41,15 @@ public class SalvoApplication {
 			gameRepo.save(game2);
 			gameRepo.save(game3);
 
-			GamePlayer gp = new GamePlayer(new Date());
-			player1.addGamePlayer(gp);
-			game2.addGamePlayer(gp);
-			gamePlayerRepo.save(gp);
+			GamePlayer gp1 = new GamePlayer(new Date());
+			player1.addGamePlayer(gp1);
+			game1.addGamePlayer(gp1);
+			gamePlayerRepo.save(gp1);
+
+			GamePlayer gp2 = new GamePlayer(new Date());
+			player2.addGamePlayer(gp2);
+			game1.addGamePlayer(gp2);
+			gamePlayerRepo.save(gp2);
 		};
 	}
 }
