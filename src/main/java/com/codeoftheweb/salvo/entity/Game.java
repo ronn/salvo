@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

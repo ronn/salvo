@@ -17,7 +17,7 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private String emal;
+    private String email;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
@@ -25,8 +25,8 @@ public class Player {
     public Player() {
     }
 
-    public Player(String userName) {
-        this.emal = userName;
+    public Player(String email) {
+        this.email = email;
     }
 
     public Long getId() {
@@ -37,17 +37,22 @@ public class Player {
         this.id = id;
     }
 
-    public String getEmal() {
-        return emal;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserName(String userName) {
-        this.emal = userName;
+    public void setEmail(String userName) {
+        this.email = userName;
     }
 
     public void addGamePlayer(GamePlayer gp){
         gp.setPlayer(this);
         gamePlayers.add(gp);
+    }
+
+    @JsonIgnore
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
     }
 
     @JsonIgnore
