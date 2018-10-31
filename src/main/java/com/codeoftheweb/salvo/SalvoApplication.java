@@ -1,13 +1,7 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.entity.Game;
-import com.codeoftheweb.salvo.entity.GamePlayer;
-import com.codeoftheweb.salvo.entity.Player;
-import com.codeoftheweb.salvo.entity.Ship;
-import com.codeoftheweb.salvo.repo.GamePlayerRepository;
-import com.codeoftheweb.salvo.repo.GameRepository;
-import com.codeoftheweb.salvo.repo.PlayerRepository;
-import com.codeoftheweb.salvo.repo.ShipRepository;
+import com.codeoftheweb.salvo.entity.*;
+import com.codeoftheweb.salvo.repo.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +20,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo){
+	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo){
 		return args -> {
 			Player player1 = new Player("j.bauer@ctu.com");
 			Player player2 = new Player("c.obria@ctu.com");
@@ -56,17 +50,34 @@ public class SalvoApplication {
             Ship ship4 = new Ship("Submarin", locations4);
 
             GamePlayer gp1 = new GamePlayer(new Date());
-            player1.addGamePlayer(gp1);
-            game1.addGamePlayer(gp1);
+			GamePlayer gp2 = new GamePlayer(new Date());
 
-            GamePlayer gp2 = new GamePlayer(new Date());
-            player2.addGamePlayer(gp2);
-            game1.addGamePlayer(gp2);
 
 			gp1.addShip(ship1);
 			gp1.addShip(ship3);
 			gp2.addShip(ship2);
 			gp2.addShip(ship4);
+
+			List<String> salvoLocations1 = Arrays.asList("A2", "C5", "D8", "F10");
+			List<String> salvoLocations2 = Arrays.asList("A2", "C5", "D8", "F10");
+			List<String> salvoLocations3 = Arrays.asList("A2", "C5", "D8", "F10");
+			List<String> salvoLocations4 = Arrays.asList("A2", "C5", "D8", "F10");
+
+			Salvo salvo1 = new Salvo(1, salvoLocations1);
+			Salvo salvo2 = new Salvo(1, salvoLocations2);
+			Salvo salvo3 = new Salvo(2, salvoLocations3);
+			Salvo salvo4 = new Salvo(2, salvoLocations4);
+
+			gp1.addSalvo(salvo1);
+			gp1.addSalvo(salvo2);
+			gp2.addSalvo(salvo3);
+			gp2.addSalvo(salvo4);
+
+			player1.addGamePlayer(gp1);
+			player2.addGamePlayer(gp2);
+
+			game1.addGamePlayer(gp1);
+			game1.addGamePlayer(gp2);
 
             gamePlayerRepo.save(gp1);
             gamePlayerRepo.save(gp2);
@@ -75,6 +86,11 @@ public class SalvoApplication {
             shipRepo.save(ship2);
             shipRepo.save(ship3);
             shipRepo.save(ship4);
+
+            salvoRepo.save(salvo1);
+            salvoRepo.save(salvo2);
+            salvoRepo.save(salvo3);
+            salvoRepo.save(salvo4);
 		};
 	}
 }
