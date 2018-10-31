@@ -5,7 +5,7 @@ window.onload = () => {
     fetch("http://localhost:8080/api/game_view/" + gamePlayerId)
         .then(response => response.json())
         .then(gameView => {
-            showInfo(gameView)
+            showInfo(gameView.gamePlayers)
             changeBackground(gameView.ships)
         })
         .catch(err => alert("Ocurrió un error: " + err))
@@ -13,7 +13,7 @@ window.onload = () => {
 
 const gamePlayerId = new URLSearchParams(window.location.search).get("gp")
 
-const showInfo = gameview => gameview.gamePlayers
+const showInfo = gamePlayers => gamePlayers
     .forEach(gp =>
          document.getElementById(
              gp.id.toString() === gamePlayerId ? "viewer" : "player"

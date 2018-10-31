@@ -45,10 +45,10 @@ public class SalvoApplication {
 			gameRepo.save(game2);
 			gameRepo.save(game3);
 
-            List<String> locations1 = Arrays.asList("A2", "B3");
-            List<String> locations2 = Arrays.asList("C4", "D5");
-            List<String> locations3 = Arrays.asList("F6", "E9");
-            List<String> locations4 = Arrays.asList("G1", "H7");
+            List<String> locations1 = Arrays.asList("A2", "B2", "C2", "D2");
+            List<String> locations2 = Arrays.asList("C4", "C5", "C6");
+            List<String> locations3 = Arrays.asList("F6", "G6", "E6");
+            List<String> locations4 = Arrays.asList("F7", "G7", "H7");
 
             Ship ship1 = new Ship("Bomber", locations1);
             Ship ship2 = new Ship("Destroyer", locations2);
