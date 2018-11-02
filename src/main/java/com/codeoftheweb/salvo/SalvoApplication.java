@@ -58,14 +58,14 @@ public class SalvoApplication {
 			gp2.addShip(ship2);
 			gp2.addShip(ship4);
 
-			List<String> salvoLocations1 = Arrays.asList("A2", "C5", "D8", "F10");
-			List<String> salvoLocations2 = Arrays.asList("A2", "C5", "D8", "F10");
-			List<String> salvoLocations3 = Arrays.asList("A2", "C5", "D8", "F10");
-			List<String> salvoLocations4 = Arrays.asList("A2", "C5", "D8", "F10");
+			List<String> salvoLocations1 = Arrays.asList("A1", "J3", "G7", "E10");
+			List<String> salvoLocations2 = Arrays.asList("B6", "C6", "A6", "F9");
+			List<String> salvoLocations3 = Arrays.asList("C9", "I1", "E4", "H5");
+			List<String> salvoLocations4 = Arrays.asList("D2", "D9", "B2", "G1");
 
 			Salvo salvo1 = new Salvo(1, salvoLocations1);
-			Salvo salvo2 = new Salvo(1, salvoLocations2);
-			Salvo salvo3 = new Salvo(2, salvoLocations3);
+			Salvo salvo2 = new Salvo(2, salvoLocations2);
+			Salvo salvo3 = new Salvo(1, salvoLocations3);
 			Salvo salvo4 = new Salvo(2, salvoLocations4);
 
 			gp1.addSalvo(salvo1);
