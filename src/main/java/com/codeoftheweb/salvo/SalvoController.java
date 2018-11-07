@@ -102,9 +102,10 @@ public class SalvoController {
     }
 
     private Map<String, Object> getMapFrom(GamePlayer gp){
-        return new HashMap<String, Object>(){{
+        return new LinkedHashMap<String, Object>(){{
             put("id", gp.getId());
             put("player", gp.getPlayer());
+            put("score", gp.getScore());
         }};
     }
 }

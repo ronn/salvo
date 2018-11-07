@@ -54,11 +54,6 @@ public class Player {
     }
 
     @JsonIgnore
-    public Set<GamePlayer> getGamePlayers() {
-        return gamePlayers;
-    }
-
-    @JsonIgnore
     public List<Game> getGames(){
         return gamePlayers
                 .stream()
@@ -66,12 +61,15 @@ public class Player {
                 .collect(toList());
     }
 
-    public Set<Score> getScores() {
-        return scores;
-    }
-
     public void addScore(Score score) {
         score.setPlayer(this);
         this.scores.add(score);
+    }
+
+    public Score getScore(Game game){
+        return this.scores.stream()
+                .filter(score -> game.equals(score.getGame()))
+                .findFirst()
+                .orElse(null);
     }
 }
