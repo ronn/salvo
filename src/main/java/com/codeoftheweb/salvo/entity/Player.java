@@ -22,6 +22,9 @@ public class Player {
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
 
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private Set<Score> scores = new HashSet<>();
+
     public Player() {
     }
 
@@ -61,5 +64,14 @@ public class Player {
                 .stream()
                 .map(GamePlayer::getGame)
                 .collect(toList());
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void addScore(Score score) {
+        score.setPlayer(this);
+        this.scores.add(score);
     }
 }

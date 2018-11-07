@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -22,6 +21,9 @@ public class Game {
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
+
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    private Set<Score> scores = new HashSet<>();
 
     public Game() {
     }
@@ -60,5 +62,14 @@ public class Game {
                 .stream()
                 .map(GamePlayer::getPlayer)
                 .collect(toList());
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void addScore(Score score) {
+        score.setGame(this);
+        this.scores.add(score);
     }
 }
