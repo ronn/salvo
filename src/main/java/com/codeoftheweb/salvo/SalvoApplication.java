@@ -72,13 +72,15 @@ public class SalvoApplication {
 			game1.addGamePlayer(gp2);
 
 			Score score1 = new Score(1.0, new Date());
-			Score score2 = new Score(2.0, new Date());
-			Score score3 = new Score(0.5, new Date());
+			Score score2 = new Score(0.5, new Date());
+			Score score3 = new Score(1.0, new Date());
 			Score score4 = new Score(1.0, new Date());
-			Score score5 = new Score(2.0, new Date());
+			Score score5 = new Score(0.0, new Date());
 			Score score6 = new Score(0.5, new Date());
 
 			player1.addScore(score1);
+			player1.addScore(score3);
+			player1.addScore(score6);
 			player2.addScore(score2);
 			game1.addScore(score1);
 			game1.addScore(score2);
@@ -107,6 +109,8 @@ public class SalvoApplication {
 
             scoreRepo.save(score1);
             scoreRepo.save(score2);
+            scoreRepo.save(score3);
+            scoreRepo.save(score6);
 		};
 	}
 }
