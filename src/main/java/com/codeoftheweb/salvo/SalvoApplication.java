@@ -22,10 +22,10 @@ public class SalvoApplication {
 	@Bean
 	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo, ScoreRepository scoreRepo){
 		return args -> {
-			Player player1 = new Player("j.bauer@ctu.com");
-			Player player2 = new Player("c.obria@ctu.com");
-			Player player3 = new Player("k.imbau@ctu.com");
-			Player player4 = new Player("t.almei@ctu.com");
+			Player player1 = new Player("j.bauer@ctu.com", "24");
+			Player player2 = new Player("c.obria@ctu.com", "42");
+			Player player3 = new Player("k.imbau@ctu.com", "kb");
+			Player player4 = new Player("t.almei@ctu.com", "mole");
 
 			Instant i = Instant.now();
 			Game game1 = new Game(Date.from(i));
