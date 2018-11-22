@@ -6,6 +6,8 @@ import com.codeoftheweb.salvo.repo.GameRepository;
 import com.codeoftheweb.salvo.repo.PlayerRepository;
 import com.codeoftheweb.salvo.repo.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -120,20 +122,44 @@ public class SalvoController {
         }};
     }
 
+    private Map<String, Object> getPlayer(Player player){
+        return new HashMap<String, Object>(){{
+            put("id", player.getId());
+            put("email", player.getEmail());
+        }};
+    }
+
     @RequestMapping("/games")
-    public List<Map<String, Object>> getGames(){
-         return gameRepo.findAll()
+    public Map<String, Object> getGames(Authentication auth){
+        List<Map<String, Object>> games = gameRepo.findAll()
                 .stream()
                 .map(this::getMapFrom)
                 .collect(toList());
+
+        return new LinkedHashMap<String, Object>(){{
+            put("player", getPlayerFromAuth(auth));
+            put("games", games);
+        }};
     }
 
     private Map<String, Object> getMapFrom(Game game){
-        return new HashMap<String, Object>(){{
+        return new LinkedHashMap<String, Object>(){{
             put("id", game.getId());
             put("created", game.getCreated());
             put("gamePlayers", getListOfMapsFrom(game.getGamePlayers()));
         }};
+    }
+
+    private boolean isGuest(Authentication authentication) {
+        return null == authentication || authentication instanceof AnonymousAuthenticationToken;
+    }
+
+    private Map<String, Object> getPlayerFromAuth(Authentication auth){
+        Player player = isGuest(auth) ? null : playerRepo.findByEmail(auth.getName());
+
+        return Optional.ofNullable(player)
+                .map(this::getPlayer)
+                .orElse(null);
     }
 
     private List<Map<String, Object>> getListOfMapsFrom(Set<GamePlayer> gps){

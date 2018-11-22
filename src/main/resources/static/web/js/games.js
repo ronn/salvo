@@ -1,6 +1,6 @@
 fetch('http://localhost:8080/api/games')
     .then(response => response.json())
-    .then(g => createTable(g))
+    .then(g => createTable(g.games))
     .catch(error => console.log('There was a problem fetching the games data:' + error.message))
 
 fetch('http://localhost:8080/api/leaderboard')

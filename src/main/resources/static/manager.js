@@ -51,3 +51,22 @@ $(function() {
 
     loadData();
 });
+
+
+fetch('http://localhost:8080/api/login', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: "username=j.bauer@ctu.gov&password=24"
+}).then(response => {
+        if (response.status === 200) {
+            console.log("Logged In!!");
+        } else if (response.status === 401) {
+            console.log("Can't login: " + response.status);
+        } else {
+            console.log("A problem has occurred: " + response.status);
+        }
+    }).catch(error => console.log("An error has ocurred: ", error))
