@@ -6,11 +6,11 @@ import com.codeoftheweb.salvo.repo.GameRepository;
 import com.codeoftheweb.salvo.repo.PlayerRepository;
 import com.codeoftheweb.salvo.repo.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -39,6 +39,17 @@ public class SalvoController {
                 .map(this::getPlayerInfo)
                 .filter(Objects::nonNull)
                 .collect(toList());
+    }
+
+    @RequestMapping(value = "/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, String>> registerPlayer(@RequestBody Player player){
+        return Optional.ofNullable(playerRepo.findByEmail(player.getEmail()))
+                .map(p -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
+                            put("error", "name in use");
+                        }}, HttpStatus.FORBIDDEN)
+                ).orElseGet(() -> new ResponseEntity<>(new HashMap<String, String>() {{
+                    put("username", playerRepo.save(player).getEmail());
+                }}, HttpStatus.CREATED));
     }
 
     private Map<String, Object> getPlayerInfo(Player p){
@@ -155,11 +166,13 @@ public class SalvoController {
     }
 
     private Map<String, Object> getPlayerFromAuth(Authentication auth){
-        Player player = isGuest(auth) ? null : playerRepo.findByEmail(auth.getName());
-
-        return Optional.ofNullable(player)
+        return getPlayerOpt(auth)
                 .map(this::getPlayer)
                 .orElse(null);
+    }
+
+    private Optional<Player> getPlayerOpt(Authentication auth) {
+        return Optional.ofNullable(isGuest(auth) ? null : playerRepo.findByEmail(auth.getName()));
     }
 
     private List<Map<String, Object>> getListOfMapsFrom(Set<GamePlayer> gps){

@@ -167,12 +167,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/rest/**").denyAll()
-				.antMatchers("/api/games").permitAll()
-				.antMatchers("/api/leaderboard").permitAll()
-				.antMatchers("/web/games.html").permitAll()
-				.antMatchers("/web/js/games.js").permitAll()
-				.antMatchers("/api/players").authenticated()
-				.antMatchers("/favicon.ico").permitAll()
+				.antMatchers(
+						"/api/games",
+						"/api/players",
+						"/api/leaderboard",
+						"/web/games.html",
+						"/web/js/games.js",
+						"/favicon.ico"
+				).permitAll()
 				.anyRequest().hasAuthority("ROLE_USER");
 
 		http.formLogin()
@@ -192,7 +194,10 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// if login is successful, just clear the flags asking for authentication
 		http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
 
-		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+		http.formLogin().failureHandler((req, res, exc) -> {
+			System.out.println("No se pudo algo: + " + exc);
+			res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		});
 
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 	}

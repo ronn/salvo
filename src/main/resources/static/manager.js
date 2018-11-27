@@ -70,3 +70,22 @@ fetch('http://localhost:8080/api/login', {
             console.log("A problem has occurred: " + response.status);
         }
     }).catch(error => console.log("An error has ocurred: ", error))
+
+fetch('http://localhost:8080/api/players', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({email: "ronn@ubi.com", password: "234234"})
+}).then(response => {
+    if (201 === response.status) {
+        console.log("User created")
+        return response.json()
+    } else {
+        console.log("Algo salió mal: " + response.status)
+        throw new Error("Salió mal: " + response.)
+    }
+}).then(r => console.log(r.status))
+    .catch(error => console.log("An error has ocurred: ", error))
