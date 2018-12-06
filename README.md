@@ -1,4 +1,4 @@
-#### salvo
+##### salvo
 REST API for salvo-style game
 
 OS: Ubuntu 17.04
