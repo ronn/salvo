@@ -1,11 +1,14 @@
 package com.codeoftheweb.salvo.repo;
 
 import com.codeoftheweb.salvo.entity.Player;
+import com.codeoftheweb.salvo.entity.Score;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource
-public interface PlayerRepository extends JpaRepository<Player, Long> {
+import java.util.List;
 
-    Player findByEmail(String email);
+@RepositoryRestResource
+public interface ScoreRepository extends JpaRepository<Score, Long> {
+
+    List<Score> findByPlayer(Player player);
 }

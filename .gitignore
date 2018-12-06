@@ -6,6 +6,7 @@
 *.bat
 gradle/
 gradlew
+.gradle/
 .idea/
 out/
 build/
