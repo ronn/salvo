@@ -155,7 +155,8 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter{
 								.roles("USER")
 								.build()
 						).orElseThrow(() -> new UsernameNotFoundException("Unknown user: " + email))
-				).orElseThrow(() -> new UsernameNotFoundException("No userName provided or not found")));
+				).orElseThrow(() -> new UsernameNotFoundException("No userName provided or not found"))
+		);
 	}
 }
 
@@ -173,6 +174,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/api/leaderboard",
 						"/web/games.html",
 						"/web/js/games.js",
+						"/web/js/login.js",
 						"/favicon.ico"
 				).permitAll()
 				.anyRequest().hasAuthority("ROLE_USER");
@@ -194,10 +196,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// if login is successful, just clear the flags asking for authentication
 		http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
 
-		http.formLogin().failureHandler((req, res, exc) -> {
-			System.out.println("No se pudo algo: + " + exc);
-			res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		});
+		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 	}

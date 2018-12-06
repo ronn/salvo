@@ -47,7 +47,23 @@ public class SalvoController {
                 .map(p -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
                             put("error", "name in use");
                         }}, HttpStatus.FORBIDDEN)
-                ).orElseGet(() -> new ResponseEntity<>(new HashMap<String, String>() {{
+                ).orElseGet(() -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
+                    put("username", playerRepo.save(player).getEmail());
+                }}, HttpStatus.CREATED));
+    }
+
+
+    private ResponseEntity<Map<String, String>> aa(Player player){
+
+
+        return new ResponseEntity<Map<String, String>>(new HashMap<String, String>(){{
+
+        }}
+        return Optional.ofNullable(playerRepo.findByEmail(player.getEmail()))
+                .map(p -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
+                            put("error", "name in use");
+                        }}, HttpStatus.FORBIDDEN)
+                ).orElseGet(() -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
                     put("username", playerRepo.save(player).getEmail());
                 }}, HttpStatus.CREATED));
     }
