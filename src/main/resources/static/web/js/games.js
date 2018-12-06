@@ -2,6 +2,7 @@ fetch('http://localhost:8080/api/games')
     .then(response => response.json())
     .then(g => {
         showLoginOrLogout(g.player)
+        showLoggedPlayer(g.player)
         createTable(g.games)
     })
     .catch(error => console.log('There was a problem fetching the games data:' + error.message))
@@ -46,5 +47,10 @@ const getLoginForm = () => `<h1>LOG IN!!</h1>
                 <input type="submit" value="Log in" onclick="login()">
                 <input type="button" value="Sign up" onclick="signup()">
             </form>`
+
+const showLoggedPlayer = player =>
+    document.getElementById("loged-player").innerText =
+        player ?  `Player logged in: ${player.email}`
+        : ""
 
 const loggear = algo => console.log("Logeando: " + JSON.stringify(algo))

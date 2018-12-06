@@ -43,29 +43,29 @@ public class SalvoController {
 
     @RequestMapping(value = "/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> registerPlayer(@RequestBody Player player){
-        return Optional.ofNullable(playerRepo.findByEmail(player.getEmail()))
-                .map(p -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
-                            put("error", "name in use");
-                        }}, HttpStatus.FORBIDDEN)
-                ).orElseGet(() -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
-                    put("username", playerRepo.save(player).getEmail());
-                }}, HttpStatus.CREATED));
+        return getResponseEntity(
+                Optional.ofNullable(playerRepo.findByEmail(player.getEmail())),
+                player
+        );
     }
 
+    private ResponseEntity<Map<String, String>> getResponseEntity(Optional<Player> optionalPlayer, Player p){
+        return new ResponseEntity<>(getResponseSignUp(optionalPlayer, p), getHTTPStatus(optionalPlayer)
+        );
+    }
 
-    private ResponseEntity<Map<String, String>> aa(Player player){
+    private HashMap<String, String> getResponseSignUp(Optional<Player> optionalPlayer, Player p) {
+        return new HashMap<String, String>() {{
+            optionalPlayer
+                    .map(player -> put("Error", "Name in use"))
+                    .orElseGet(() -> put("userName", playerRepo.save(p).getEmail()));
+        }};
+    }
 
-
-        return new ResponseEntity<Map<String, String>>(new HashMap<String, String>(){{
-
-        }}
-        return Optional.ofNullable(playerRepo.findByEmail(player.getEmail()))
-                .map(p -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
-                            put("error", "name in use");
-                        }}, HttpStatus.FORBIDDEN)
-                ).orElseGet(() -> new ResponseEntity<Map<String, String>>(new HashMap<String, String>() {{
-                    put("username", playerRepo.save(player).getEmail());
-                }}, HttpStatus.CREATED));
+    private HttpStatus getHTTPStatus(Optional<Player> optionalPlayer) {
+        return optionalPlayer
+                .map(player -> HttpStatus.FORBIDDEN)
+                .orElse(HttpStatus.CREATED);
     }
 
     private Map<String, Object> getPlayerInfo(Player p){
