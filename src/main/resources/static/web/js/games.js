@@ -3,7 +3,7 @@ fetch('http://localhost:8080/api/games')
     .then(g => {
         showLoginOrLogout(g.player)
         showLoggedPlayer(g.player)
-        createTable(g.games)
+        createGamesTable(g)
     })
     .catch(error => console.log('There was a problem fetching the games data:' + error.message))
 
@@ -12,13 +12,28 @@ fetch('http://localhost:8080/api/leaderboard')
     .then(leaderRanking => createLeaderboard(leaderRanking))
     .catch(error => console.log('There was a problem fetching the leaderboard: ' + error.message))
 
-const createTable = games =>
-    games.map(g => `<tr>
-                <td> ${g.id}</td>
-                <td> ${new Date(g.created)}</td>
-                <td>${g.gamePlayers.map(gp => gp.player.email)}</td>
-            </tr>`)
+const createGamesTable = response =>
+    response.games.map(g =>
+        `<tr>
+            <td> ${g.id}</td>
+            <td> ${new Date(g.created)}</td>
+            <td>${g.gamePlayers.map(gp => gp.player.email)}</td>
+            <td>${getGameLinkCell(g.gamePlayers, response.player)}</td>
+            </tr>`
+        )
         .forEach(row => document.getElementById('tabla').innerHTML += row)
+
+const getGameLinkCell = (gps, player) => null !== player
+    ? getLinksPerGP(gps, player)
+    : `<span>You should log in!</span>`
+
+const getLinksPerGP = (gps, player) => {
+    const tag = gps
+        .filter(gp => gp.player.id === player.id)
+        .map(gp => `<a href="game.html?gp=${gp.id}">Return to game!</a>`)
+
+    return tag.length > 0 ? tag[0] : `<span>Not playing</span>`
+}
 
 const createLeaderboard = ranking =>
     ranking.sort((a, b) => b.total - a.total)

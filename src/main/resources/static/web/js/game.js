@@ -47,7 +47,7 @@ const paintShipHit = gamePlayer => gamePlayer.ships
                 .filter(loc => loc === location)
                 .forEach(salvoHit => {
                     document.getElementsByClassName(salvoHit)[0].style.backgroundColor="RED"
-                    document.getElementsByClassName(salvoHit)[0].innerHTML="<span style='color: white; font-weight: bold'>" + salvo.turn + "</pan>"
+                    document.getElementsByClassName(salvoHit)[0].innerHTML="<span style='color: white; font-weight: bold'>" + salvo.turn + "</span>"
                 })
             )
         )
@@ -68,4 +68,3 @@ const getRows = () =>
             .join("")
         + "</tr>"
     ).join("")
-

@@ -72,9 +72,9 @@ public class SalvoController {
         List<Score> scores = scoreRepo.findByPlayer(p);
         if (scores.size() == 0) return null;
 
-        Double WON_SCORE = 1.0;
-        Double TIE_SCORE = 0.5;
-        Double LOST_SCORE = 0.0;
+        final Double WON_SCORE = 1.0;
+        final Double TIE_SCORE = 0.5;
+        final Double LOST_SCORE = 0.0;
 
         return new LinkedHashMap<String, Object>(){{
             put("name", p.getEmail());
@@ -100,16 +100,26 @@ public class SalvoController {
     }
 
     @RequestMapping("/game_view/{nn}")
-    public Map<String, Object> getGameView(@PathVariable Long nn){
-        return gamePlayerRepo.findById(nn)
-                .map(gamePlayer -> new LinkedHashMap<String, Object>(){{
-                    put("id", gamePlayer.getGame().getId());
-                    put("created", gamePlayer.getGame().getCreated());
-                    put("gamePlayers", getGamePlayersFrom(gamePlayer.getGame().getGamePlayers()));
-                    put("ships", buildShips(gamePlayer.getShips()));
-                    put("salvoes", buildSalvoes(gamePlayer.getGame().getGamePlayers()));
-                }})
-                .orElse(null);
+    public ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long nn, Authentication auth){
+          return gamePlayerRepo.findById(nn)
+                .flatMap(gamePlayer -> getPlayerOpt(auth)
+                        .map(player -> getMapResponseEntity(gamePlayer, player))
+                ).orElse(new ResponseEntity<>(HttpStatus.FORBIDDEN));
+    }
+
+    private ResponseEntity<Map<String, Object>> getMapResponseEntity(GamePlayer gamePlayer, Player player) {
+        return gamePlayer.getPlayer().equals(player) ?
+                new ResponseEntity<>(
+                        new LinkedHashMap<String, Object>() {{
+                            put("id", gamePlayer.getGame().getId());
+                            put("created", gamePlayer.getGame().getCreated());
+                            put("gamePlayers", getGamePlayersFrom(gamePlayer.getGame().getGamePlayers()));
+                            put("ships", buildShips(gamePlayer.getShips()));
+                            put("salvoes", buildSalvoes(gamePlayer.getGame().getGamePlayers()));
+                        }},
+                        HttpStatus.OK
+                )
+                : new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     private List<Map<String, Object>> buildShips(Set<Ship> ships){
@@ -125,11 +135,11 @@ public class SalvoController {
         return gps.stream()
                 .flatMap(gp -> gp.getSalvoes().stream()
                         .map(salvo -> new LinkedHashMap<String, Object>() {{
-                                put("turn", salvo.getTurn());
-                                put("player", salvo.getGamePlayer().getPlayer().getId());
-                                put("locations", salvo.getLocations());
-                            }})
-                        ).collect(toList());
+                            put("turn", salvo.getTurn());
+                            put("player", salvo.getGamePlayer().getPlayer().getId());
+                            put("locations", salvo.getLocations());
+                        }})
+                ).collect(toList());
     }
 
     private List<Map<String, Object>> getGamePlayersFrom(Set<GamePlayer> gps){
@@ -158,15 +168,17 @@ public class SalvoController {
 
     @RequestMapping("/games")
     public Map<String, Object> getGames(Authentication auth){
-        List<Map<String, Object>> games = gameRepo.findAll()
+        return new LinkedHashMap<String, Object>(){{
+            put("player", getPlayerFromAuth(auth));
+            put("games", getCollectedGames());
+        }};
+    }
+
+    private List<Map<String, Object>> getCollectedGames() {
+        return gameRepo.findAll()
                 .stream()
                 .map(this::getMapFrom)
                 .collect(toList());
-
-        return new LinkedHashMap<String, Object>(){{
-            put("player", getPlayerFromAuth(auth));
-            put("games", games);
-        }};
     }
 
     private Map<String, Object> getMapFrom(Game game){
