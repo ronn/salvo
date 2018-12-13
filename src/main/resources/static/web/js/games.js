@@ -1,8 +1,11 @@
+document.getElementById("newGameButon").style.visibility = "hidden";
+
 fetch('http://localhost:8080/api/games')
     .then(response => response.json())
     .then(g => {
         showLoginOrLogout(g.player)
         showLoggedPlayer(g.player)
+        showNewGameButton(g.player)
         createGamesTable(g)
     })
     .catch(error => console.log('There was a problem fetching the games data:' + error.message))
@@ -30,7 +33,7 @@ const getGameLinkCell = (gps, player) => null !== player
 const getLinksPerGP = (gps, player) => {
     const tag = gps
         .filter(gp => gp.player.id === player.id)
-        .map(gp => `<a href="game.html?gp=${gp.id}">Return to game!</a>`)
+        .map(gp => `<a href="game.html?gp=${gp.id}">Play game!</a>`)
 
     return tag.length > 0 ? tag[0] : `<span>Not playing</span>`
 }
@@ -55,7 +58,7 @@ const getLoginForm = () => `<h1>LOG IN!!</h1>
             <form onsubmit="return false">
                 <label for="email-login">User name</label>
                 <input id="email-login" type="email" required autocomplete="username">
-            
+
                 <label for="pass-login">Pass word</label>
                 <input id="pass-login" type="password" required autocomplete="current-password">
 
@@ -67,5 +70,17 @@ const showLoggedPlayer = player =>
     document.getElementById("loged-player").innerText =
         player ?  `Player logged in: ${player.email}`
         : ""
+
+const showNewGameButton = player => {
+    document.getElementById("newGameButon").style.visibility =
+        player ?  "visible" : "hidden"
+}
+
+const createNewGame = () => fetch('http://localhost:8080/api/games', {
+    method: 'POST',
+    credentials: 'include'
+}).then(response => response.json())
+    .then(gpidJson => window.location.replace("http://localhost:8080/web/game.html?gp=" + gpidJson.gpid))
+    .catch(error => alert("Couldn't create a new game: " + error))
 
 const loggear = algo => console.log("Logeando: " + JSON.stringify(algo))

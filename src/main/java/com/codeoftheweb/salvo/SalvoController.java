@@ -217,4 +217,27 @@ public class SalvoController {
             put("score", gp.getScore());
         }};
     }
+
+    @RequestMapping(value = "/games", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createGame(Authentication auth){
+        return getPlayerOpt(auth)
+                .map(player -> new ResponseEntity<Map<String, Object>>(
+                        new HashMap<String, Object>() {{
+                            put("gpid", saveNewGame(player));
+                        }},
+                        HttpStatus.CREATED
+                )).orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
+    }
+
+    private Long saveNewGame(Player player) {
+        Game game = new Game(new Date());
+        GamePlayer gp = new GamePlayer(new Date());
+
+        player.addGamePlayer(gp);
+        game.addGamePlayer(gp);
+
+        gameRepo.save(game);
+
+        return gamePlayerRepo.save(gp).getId();
+    }
 }
