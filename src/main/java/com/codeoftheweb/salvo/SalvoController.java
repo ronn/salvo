@@ -221,23 +221,48 @@ public class SalvoController {
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createGame(Authentication auth){
         return getPlayerOpt(auth)
-                .map(player -> new ResponseEntity<Map<String, Object>>(
-                        new HashMap<String, Object>() {{
-                            put("gpid", saveNewGame(player));
-                        }},
-                        HttpStatus.CREATED
-                )).orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
+                .map(player -> getGpid(player, new Game()))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }
 
-    private Long saveNewGame(Player player) {
-        Game game = new Game(new Date());
+    private ResponseEntity<Map<String, Object>> getGpid(Player player, Game game) {
+        return new ResponseEntity<>(
+                new HashMap<String, Object>() {{
+                    put("gpid", saveGame(player, game));
+                }},
+                HttpStatus.CREATED
+        );
+    }
+
+    private Long saveGame(Player player, Game game) {
         GamePlayer gp = new GamePlayer(new Date());
 
         player.addGamePlayer(gp);
         game.addGamePlayer(gp);
 
         gameRepo.save(game);
+        playerRepo.save(player);
 
         return gamePlayerRepo.save(gp).getId();
+    }
+
+    @RequestMapping(value = "/game/{nn}/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> joinGame(@PathVariable Long nn, Authentication auth){
+         return getPlayerOpt(auth)
+                .flatMap(player -> gameRepo.findById(nn)
+                        .map(game -> game.getGamePlayers().size() > 1
+                                ? getForbiddenResponse("Game is full")
+                                : getGpid(player, game)
+                        )
+                ).orElseGet(() -> getForbiddenResponse("No such Game!"));
+    }
+
+    private ResponseEntity<Map<String, Object>> getForbiddenResponse(String msj) {
+        return new ResponseEntity<>(
+                new HashMap<String, Object>() {{
+                    put("msj", msj);
+                }},
+                HttpStatus.FORBIDDEN
+        );
     }
 }
