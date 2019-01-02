@@ -39,14 +39,13 @@ const signup = () => {
     }).then(response => {
         if (201 === response.status) {
             login()
-            console.log("User created")
             return response.json()
         } else {
             console.log("Algo salió mal: " + response.status)
             if (403 === response.status){
                 alert("Username already in use")
             }
-            throw new Error("Salió mal: " + response)
+            throw new Error("Something went wrong: " + response)
         }
     }).then(r => console.log(r.status))
         .catch(error => console.log("An error has ocurred: ", error))

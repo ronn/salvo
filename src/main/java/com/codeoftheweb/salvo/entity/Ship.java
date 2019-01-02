@@ -14,7 +14,7 @@ public class Ship {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    private String type;
+    private Type type;
 
     @ElementCollection
     private List<String> locations;
@@ -26,8 +26,13 @@ public class Ship {
     public Ship() {
     }
 
-    public Ship(String type, List<String> locations) {
+    public Ship(Type type, List<String> locations) {
         this.type = type;
+        this.locations = locations;
+    }
+
+    public Ship(String type, List<String> locations) {
+        this.type = Type.valueOf(type);
         this.locations = locations;
     }
 
@@ -39,11 +44,11 @@ public class Ship {
         this.id = id;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -62,5 +67,13 @@ public class Ship {
 
     public void setGamePlayer(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
+    }
+
+    public enum Type {
+            AircraftCarrier,
+            Battleship,
+            Submarine,
+            Destroyer,
+            PatrolBoat
     }
 }
