@@ -1,10 +1,7 @@
 package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.entity.*;
-import com.codeoftheweb.salvo.repo.GamePlayerRepository;
-import com.codeoftheweb.salvo.repo.GameRepository;
-import com.codeoftheweb.salvo.repo.PlayerRepository;
-import com.codeoftheweb.salvo.repo.ScoreRepository;
+import com.codeoftheweb.salvo.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +21,15 @@ public class SalvoController {
     private final GamePlayerRepository gamePlayerRepo;
     private final PlayerRepository playerRepo;
     private final ScoreRepository scoreRepo;
+    private final ShipRepository shipRepo;
 
     @Autowired
-    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, PlayerRepository playerRepo, ScoreRepository scoreRepo) {
+    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, PlayerRepository playerRepo, ScoreRepository scoreRepo, ShipRepository shipRepo) {
         this.gameRepo = gameRepo;
         this.gamePlayerRepo = gamePlayerRepo;
         this.playerRepo = playerRepo;
         this.scoreRepo = scoreRepo;
+        this.shipRepo = shipRepo;
     }
 
     @RequestMapping("/leaderboard")
@@ -44,7 +43,7 @@ public class SalvoController {
     @RequestMapping(value = "/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> registerPlayer(@RequestBody Player player){
         return getResponseEntity(
-                Optional.ofNullable(playerRepo.findByEmail(player.getEmail())),
+                playerRepo.findByEmail(player.getEmail()),
                 player
         );
     }
@@ -200,7 +199,7 @@ public class SalvoController {
     }
 
     private Optional<Player> getPlayerOpt(Authentication auth) {
-        return Optional.ofNullable(isGuest(auth) ? null : playerRepo.findByEmail(auth.getName()));
+        return isGuest(auth) ? Optional.empty() : playerRepo.findByEmail(auth.getName());
     }
 
     private List<Map<String, Object>> getListOfMapsFrom(Set<GamePlayer> gps){
@@ -258,11 +257,45 @@ public class SalvoController {
     }
 
     private ResponseEntity<Map<String, Object>> getForbiddenResponse(String msj) {
+        return getCustomResponse(msj, HttpStatus.FORBIDDEN);
+    }
+
+    private ResponseEntity<Map<String, Object>> getUnauthorizedResponse(String msj) {
+        return getCustomResponse(msj, HttpStatus.UNAUTHORIZED);
+    }
+
+    private ResponseEntity<Map<String, Object>> getCreatedResponse(String msj) {
+        return getCustomResponse(msj, HttpStatus.CREATED);
+    }
+
+    private ResponseEntity<Map<String, Object>> getCustomResponse(String msj, HttpStatus status) {
         return new ResponseEntity<>(
                 new HashMap<String, Object>() {{
                     put("msj", msj);
                 }},
-                HttpStatus.FORBIDDEN
+                status
         );
+    }
+
+    @RequestMapping(value = "/games/players/{gpId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> placeShips(@PathVariable Long gpId, @RequestBody List<Ship> ships, Authentication auth){
+        return getPlayerOpt(auth)
+                .map(player -> gamePlayerRepo.findById(gpId)
+                        .map(gp -> gp.getPlayer().equals(player)
+                                ? saveShips(ships, gp)
+                                : getUnauthorizedResponse("The current user is not the game player the ID references")
+                        ).orElseGet(() -> getUnauthorizedResponse("There is no game player with the given ID"))
+                 ).orElseGet(() -> getUnauthorizedResponse("There is no current user logged in"));
+    }
+
+    private ResponseEntity<Map<String, Object>> saveShips(List<Ship> ships, GamePlayer gp){
+        if (gp.getShips().size() > 0) return getForbiddenResponse("User already has ships placed");
+
+        ships.forEach(ship -> {
+            ship.setGamePlayer(gp);
+            shipRepo.save(ship);
+        });
+
+        return getCreatedResponse("Ships placed!");
     }
 }

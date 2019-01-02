@@ -56,10 +56,10 @@ public class SalvoApplication {
             List<String> locations3 = Arrays.asList("F6", "G6", "E6");
             List<String> locations4 = Arrays.asList("F7", "G7", "H7");
 
-            Ship ship1 = new Ship("Bomber", locations1);
-            Ship ship2 = new Ship("Destroyer", locations2);
-            Ship ship3 = new Ship("Boat", locations3);
-            Ship ship4 = new Ship("Submarin", locations4);
+            Ship ship1 = new Ship(Ship.Type.AircraftCarrier, locations1);
+            Ship ship2 = new Ship(Ship.Type.Battleship, locations2);
+            Ship ship3 = new Ship(Ship.Type.Submarine, locations3);
+            Ship ship4 = new Ship(Ship.Type.PatrolBoat, locations4);
 
             GamePlayer gp1 = new GamePlayer(new Date());
 			GamePlayer gp2 = new GamePlayer(new Date());
@@ -147,7 +147,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter{
 	@Override
 	public void init(AuthenticationManagerBuilder amb) throws Exception {
 		amb.userDetailsService(userName -> Optional.of(userName)
-				.map(email -> Optional.of(playerRepo.findByEmail(email))
+				.map(email -> playerRepo.findByEmail(email)
 						.map(player -> User
 								.withDefaultPasswordEncoder()
 								.username(player.getEmail())
