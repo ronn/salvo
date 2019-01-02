@@ -5,7 +5,7 @@ window.onload = () => {
     Array.from(document.getElementsByClassName("table-rows"))
         .forEach(value => value.innerHTML = getRows())
 
-    fetch("http://localhost:8080/api/game_view/" + gamePlayerId)
+    fetch("http://localhost:8080/api/game_view/" + getGPId)
         .then(response => response.json())
         .then(gameView => {
             showInfo(gameView.gamePlayers)
@@ -16,12 +16,12 @@ window.onload = () => {
         .catch(err => console.log("Ocurrió un error: " + err))
 }
 
-const gamePlayerId = new URLSearchParams(window.location.search).get("gp")
+const getGPId = new URLSearchParams(window.location.search).get("gp")
 
 const loggear = dato => console.log(JSON.stringify(dato))
 
 const changeBackgroundSalvoes = salvoes => salvoes
-    .filter(s => s.player.toString() === gamePlayerId)
+    .filter(s => s.player.toString() === getGPId)
     .forEach(s => s.locations
         .forEach(loc => {
             document.getElementsByClassName(loc)[1].style.backgroundColor="GREEN"
@@ -32,7 +32,7 @@ const changeBackgroundSalvoes = salvoes => salvoes
 const showInfo = gamePlayers => gamePlayers
     .forEach(gp =>
          document.getElementById(
-             gp.id.toString() === gamePlayerId ? "viewer" : "player"
+             gp.id.toString() === getGPId ? "viewer" : "player"
          ).innerText = gp.player.email
     )
 
@@ -68,3 +68,25 @@ const getRows = () =>
             .join("")
         + "</tr>"
     ).join("")
+
+const placeShips = () => fetch(`http://localhost:8080/api/games/players/${getGPId}/ships`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    },
+    body: buildShipsToPlace()
+}).then(response => response.json())
+    .then(json => {
+        if ("CREATED" === json.status){
+            window.location.reload()
+        }else {
+            alert(JSON.stringify(json.msj))
+        }
+    })
+    .catch(error => console.log("An error has ocurred: ", error))
+
+const buildShipsToPlace = () => "[ { \"type\": \"Destroyer\", \"locations\": [\"A1\", \"B1\", \"C1\"] },\n" +
+"  { \"type\": \"PatrolBoat\", \"locations\": [\"H5\", \"H6\"] }\n" +
+"]"

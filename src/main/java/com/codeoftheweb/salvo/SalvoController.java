@@ -272,6 +272,7 @@ public class SalvoController {
         return new ResponseEntity<>(
                 new HashMap<String, Object>() {{
                     put("msj", msj);
+                    put("status", status);
                 }},
                 status
         );
