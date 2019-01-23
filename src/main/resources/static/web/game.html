@@ -2,9 +2,16 @@
 
 <html>
 <head>
+    <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+    />
     <meta charset="utf-8">
 
     <title>Ship Locations!</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -13,14 +20,50 @@
     <p id=>Player:</p><p id="viewer"></p> <p id=>Oponent:</p><p id="player"></p>
 
     <h2>Ships!</h2>
-    <table class="tableShips" width="100%" border="5">
+    <table id="ships-grid" class="fixed tableShips" border="5">
         <thead class="table-headers">
         </thead>
         <tbody class="table-rows">
         </tbody>
     </table>
 
-    <button onclick="placeShips()">Place your ships!</button>
+    <div id="ship-butons">
+     <button id="place-ships" onclick="placeShipsInServer()">Place your ships!</button>
+
+    <button
+            id="aircraftcarrier"
+            onclick="setHover(ships.AircraftCarrier)">Aircraft Carrier
+    </button>
+    <button
+            id="battleship"
+            onclick="setHover(ships.Battleship)">Battleship
+    </button>
+    <button
+            id="submarine"
+            onclick="setHover(ships.Submarine)">Submarine
+    </button>
+    <button
+            id="destroyer"
+            onclick="setHover(ships.Destroyer)">Destroyer
+    </button>
+    <button
+            id="patrolboat"
+            onclick="setHover(ships.PatrolBoat)">Patrol Boat
+    </button>
+
+        <fieldset id="orientation-choose">
+            <label>
+                <input type="radio" name="orientation" value="vertical" checked>
+            </label>Vertical<br>
+            <label>
+                <input type="radio" name="orientation" value="horizontal">
+            </label>Horizontal<br>
+        </fieldset>
+    </div>
+
+    <br>
+    <hr/>
+    <br>
 
     <br>
 
@@ -35,6 +78,7 @@
     <hr/>
 
     <button onclick="window.location.replace('http://localhost:8080/web/games.html')">HOME!</button>
-<script src="js/game.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/ships.js"></script>
 </body>
 </html>

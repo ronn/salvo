@@ -290,7 +290,7 @@ public class SalvoController {
     }
 
     private ResponseEntity<Map<String, Object>> saveShips(List<Ship> ships, GamePlayer gp){
-        if (gp.getShips().size() > 0) return getForbiddenResponse("User already has ships placed");
+        if (!gp.getShips().isEmpty()) return getForbiddenResponse("User already has ships placed");
 
         ships.forEach(ship -> {
             ship.setGamePlayer(gp);
