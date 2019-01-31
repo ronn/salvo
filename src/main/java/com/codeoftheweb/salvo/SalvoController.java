@@ -22,14 +22,16 @@ public class SalvoController {
     private final PlayerRepository playerRepo;
     private final ScoreRepository scoreRepo;
     private final ShipRepository shipRepo;
+    private final SalvoRepository salvoRepo;
 
     @Autowired
-    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, PlayerRepository playerRepo, ScoreRepository scoreRepo, ShipRepository shipRepo) {
+    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, PlayerRepository playerRepo, ScoreRepository scoreRepo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
         this.gameRepo = gameRepo;
         this.gamePlayerRepo = gamePlayerRepo;
         this.playerRepo = playerRepo;
         this.scoreRepo = scoreRepo;
         this.shipRepo = shipRepo;
+        this.salvoRepo = salvoRepo;
     }
 
     @RequestMapping("/leaderboard")
@@ -298,5 +300,32 @@ public class SalvoController {
         });
 
         return getCreatedResponse("Ships placed!");
+    }
+
+    @RequestMapping(value = "/games/players/{gpId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> fireSalvo(@PathVariable Long gpId, @RequestBody Salvo salvo, Authentication auth){
+        return getPlayerOpt(auth)
+                .map(player -> gamePlayerRepo.findById(gpId)
+                        .map(gp -> gp.getPlayer().equals(player)
+                                ? saveSalvo(salvo, gp)
+                                : getUnauthorizedResponse("The current user is not the game player the ID references")
+                        ).orElseGet(() -> getUnauthorizedResponse("There is no game player with the given ID"))
+                ).orElseGet(() -> getUnauthorizedResponse("There is no current user logged in"));
+    }
+
+    private ResponseEntity<Map<String, Object>> saveSalvo(Salvo salvo, GamePlayer gp){
+        System.out.println("Trying to fire salvo: " + salvo);
+        boolean hasSalvoInTurn = !gp.getSalvoes().stream()
+                .filter(s -> s.getTurn().equals(salvo.getTurn()))
+                .collect(toList())
+                .isEmpty();
+
+        System.out.println("User already has salvos for the turn: " + hasSalvoInTurn);
+        if (hasSalvoInTurn) return getForbiddenResponse("User has already fired a salvo in this turn");
+
+        salvo.setGamePlayer(gp);
+        salvoRepo.save(salvo);
+
+        return getCreatedResponse("Salvo fired!");
     }
 }

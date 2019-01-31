@@ -190,12 +190,25 @@ const buildButtons = playerShips => {
 
 const getOrientation = () => document.querySelector('input[name="orientation"]:checked').value
 
+const placeSalvoInServer = () => fetch(`http://localhost:8080/api/games/players/1/salvos`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({})
+}).then(response => response.json())
+    .then(json => {
+        if ("CREATED" === json.status){
+            window.location.reload()
+        }else {
+            alert(JSON.stringify(json.msj))
+        }
+    })
+    .catch(error => console.log("An error has ocurred: ", error))
 
-- Ejército de Liberación Nacional (ELN)
-- Fuerzas Armadas Revolucionarias de Colombia (FARC)
-- Movimiento 19 de abril (M19)
-- Ejército de Popular de Liberación (EPL)
-- Ejército Revolucionario del Pueblo (ERP)
-- Movimiento Armado Quintín Lame (MAQL)
-- Movimiento Jaime Bateman Cayón (Bateman Cayon)
-- Ejército Revolucionario Guevarista (ERG)
+const salvoToFire = {
+    location: ["C4", "B4"],
+    turn: 1
+}
