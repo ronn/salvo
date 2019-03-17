@@ -117,19 +117,44 @@ public class SalvoController {
                             put("gamePlayers", getGamePlayersFrom(gamePlayer.getGame().getGamePlayers()));
                             put("ships", buildShips(gamePlayer.getShips()));
                             put("salvoes", buildSalvoes(gamePlayer.getGame().getGamePlayers()));
+                            put("oponent", getOponent(gamePlayer));
                         }},
                         HttpStatus.OK
                 )
                 : new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
+    private HashMap<String, Object> getOponent(GamePlayer hosterPlayer){
+        return hosterPlayer.getGame().getGamePlayers().stream()
+                .filter(gp -> gp != hosterPlayer)
+                .findFirst()
+                .map(this::getMapFromOponent)
+                .orElse(null);
+    }
+
+    private HashMap<String, Object> getMapFromOponent(GamePlayer oponent){
+        return new LinkedHashMap<String, Object>(){{
+            put("hasPlacedShips", !oponent.getShips().isEmpty());
+        }};
+    }
+
     private List<Map<String, Object>> buildShips(Set<Ship> ships){
         return ships.stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
+                    put("player", ship.getGamePlayer().getPlayer().getId());
                     put("type", ship.getType());
                     put("locations", ship.getLocations());
                 }})
                 .collect(toList());
+    }
+
+    private List<Map<String, Object>> buildSalvoesMap(Set<Salvo> salvos){
+        return salvos.stream()
+                .map(salvo -> new LinkedHashMap<String, Object>() {{
+                    put("turn", salvo.getTurn());
+                    put("player", salvo.getGamePlayer().getPlayer().getId());
+                    put("locations", salvo.getLocations());
+                }}).collect(toList());
     }
 
     private List<Map<String, Object>> buildSalvoes(Set<GamePlayer> gps){
@@ -314,18 +339,42 @@ public class SalvoController {
     }
 
     private ResponseEntity<Map<String, Object>> saveSalvo(Salvo salvo, GamePlayer gp){
-        System.out.println("Trying to fire salvo: " + salvo);
-        boolean hasSalvoInTurn = !gp.getSalvoes().stream()
+        salvo.setTurn((gp.getSalvoes().size()) + 1);
+        if (gp.getSalvoes().stream()
                 .filter(s -> s.getTurn().equals(salvo.getTurn()))
                 .collect(toList())
-                .isEmpty();
+                .isEmpty()){
+            gp.addSalvo(salvo);
+            save(salvo);
+            return getCreatedResponse("Salvo fired!");
+        }
+        return getForbiddenResponse("User has already fired a salvo in this turn");
 
-        System.out.println("User already has salvos for the turn: " + hasSalvoInTurn);
-        if (hasSalvoInTurn) return getForbiddenResponse("User has already fired a salvo in this turn");
+        /*return gp.getGame().getGamePlayers()
+                .stream()
+                .filter(gamePlayer -> !gamePlayer.equals(gp))
+                .findFirst()
+                .map(gamePlayer -> {
+                    salvo.setTurn((gamePlayer.getSalvoes().size()) + 1);
+                    if (gamePlayer.getSalvoes().stream()
+                            .filter(s -> s.getTurn().equals(salvo.getTurn()))
+                            .collect(toList())
+                            .isEmpty()){
+                        salvo.setGamePlayer(gamePlayer);
+                        salvoRepo.save(salvo);
+                        return getCreatedResponse("Salvo fired!");
+                    }
+                        return getForbiddenResponse("User has already fired a salvo in this turn");
+                }).orElse(getForbiddenResponse("You don't have an Oponent"));*/
+    }
 
-        salvo.setGamePlayer(gp);
+    private void save(Salvo salvo) {
         salvoRepo.save(salvo);
+    }
 
-        return getCreatedResponse("Salvo fired!");
+    private void jorge(){
+        new ResponseEntity<Object>(new HashMap<String, Object>(){{
+            put("gpid", 2);
+        }}, HttpStatus.CREATED);
     }
 }

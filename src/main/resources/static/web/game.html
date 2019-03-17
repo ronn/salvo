@@ -19,6 +19,8 @@
 
     <p id=>Player:</p><p id="viewer"></p> <p id=>Oponent:</p><p id="player"></p>
 
+    <button onclick="window.location.replace('http://localhost:8080/web/games.html')">HOME!</button>
+
     <h2>Ships!</h2>
     <table id="ships-grid" class="fixed tableShips" border="5">
         <thead class="table-headers">
@@ -27,8 +29,10 @@
         </tbody>
     </table>
 
+    <div id="fire-spot"></div>
     <div id="ship-butons">
      <button id="place-ships" onclick="placeShipsInServer()">Place your ships!</button>
+     <button id="fire-salvo" onclick="shootSalvo()">Fire your salvo!</button>
 
     <button
             id="aircraftcarrier"
@@ -61,24 +65,21 @@
         </fieldset>
     </div>
 
-    <br>
-    <hr/>
-    <br>
+    <div id="salvoes-table">
 
-    <br>
+        <hr/>
 
     <h2>Salvoes!</h2>
-    <table class="tableShips" width="100%" border="5">
+    <table id="salvoes-grid" class="fixed tableShips" border="5">
         <thead class="table-headers">
         </thead>
         <tbody class="table-rows">
         </tbody>
     </table>
+    </div>
 
-    <hr/>
-
-    <button onclick="window.location.replace('http://localhost:8080/web/games.html')">HOME!</button>
     <script src="js/game.js"></script>
     <script src="js/ships.js"></script>
+    <script src="js/salvos.js"></script>
 </body>
 </html>

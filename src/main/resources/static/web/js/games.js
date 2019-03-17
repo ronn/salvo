@@ -12,7 +12,8 @@ fetch('http://localhost:8080/api/games')
 
 fetch('http://localhost:8080/api/leaderboard')
     .then(response => response.json())
-    .then(leaderRanking => createLeaderboard(leaderRanking))
+    .then(leaderRanking => leaderRanking.sort((a, b) => b.total - a.total))
+    .then(orderedLeaderRanking => createLeaderboard(orderedLeaderRanking))
     .catch(error => console.log('There was a problem fetching the leaderboard: ' + error.message))
 
 const createGamesTable = response =>
@@ -40,8 +41,7 @@ const extracted = (gps, player) => gps
     .map(gp => `<a href="game.html?gp=${gp.id}">Play game!</a>`)
 
 const createLeaderboard = ranking =>
-    ranking.sort((a, b) => b.total - a.total)
-        .map(r => `<tr>
+    ranking.map(r => `<tr>
                 <td> ${r.name}</td>
                 <td> ${r.total}</td>
                 <td> ${r.won}</td>
@@ -55,7 +55,7 @@ const showLoginOrLogout = player => document.getElementById("logInOut")
     `<input type="submit" value="Log out" onclick="logout()">`
     : getLoginForm()
 
-const getLoginForm = () => `<h1>LOG IN!!</h1>
+const getLoginForm = () => `<h1>LOG IN!!</h1>3
             <form onsubmit="return false">
                 <label for="email-login">User name</label>
                 <input id="email-login" type="email" required autocomplete="username">
@@ -72,10 +72,9 @@ const showLoggedPlayer = player =>
         player ?  `Player logged in: ${player.email}`
         : ""
 
-const showNewGameButton = player => {
+const showNewGameButton = player =>
     document.getElementById("newGameButon").style.visibility =
         player ?  "visible" : "hidden"
-}
 
 const createNewGame = () => fetch('http://localhost:8080/api/games', {
     method: 'POST',
