@@ -22,14 +22,16 @@ public class SalvoController {
     private final PlayerRepository playerRepo;
     private final ScoreRepository scoreRepo;
     private final ShipRepository shipRepo;
+    private final SalvoRepository salvoRepo;
 
     @Autowired
-    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, PlayerRepository playerRepo, ScoreRepository scoreRepo, ShipRepository shipRepo) {
+    public SalvoController(GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, PlayerRepository playerRepo, ScoreRepository scoreRepo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
         this.gameRepo = gameRepo;
         this.gamePlayerRepo = gamePlayerRepo;
         this.playerRepo = playerRepo;
         this.scoreRepo = scoreRepo;
         this.shipRepo = shipRepo;
+        this.salvoRepo = salvoRepo;
     }
 
     @RequestMapping("/leaderboard")
@@ -115,19 +117,44 @@ public class SalvoController {
                             put("gamePlayers", getGamePlayersFrom(gamePlayer.getGame().getGamePlayers()));
                             put("ships", buildShips(gamePlayer.getShips()));
                             put("salvoes", buildSalvoes(gamePlayer.getGame().getGamePlayers()));
+                            put("oponent", getOponent(gamePlayer));
                         }},
                         HttpStatus.OK
                 )
                 : new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
+    private HashMap<String, Object> getOponent(GamePlayer hosterPlayer){
+        return hosterPlayer.getGame().getGamePlayers().stream()
+                .filter(gp -> gp != hosterPlayer)
+                .findFirst()
+                .map(this::getMapFromOponent)
+                .orElse(null);
+    }
+
+    private HashMap<String, Object> getMapFromOponent(GamePlayer oponent){
+        return new LinkedHashMap<String, Object>(){{
+            put("hasPlacedShips", !oponent.getShips().isEmpty());
+        }};
+    }
+
     private List<Map<String, Object>> buildShips(Set<Ship> ships){
         return ships.stream()
                 .map(ship -> new LinkedHashMap<String, Object>(){{
+                    put("player", ship.getGamePlayer().getPlayer().getId());
                     put("type", ship.getType());
                     put("locations", ship.getLocations());
                 }})
                 .collect(toList());
+    }
+
+    private List<Map<String, Object>> buildSalvoesMap(Set<Salvo> salvos){
+        return salvos.stream()
+                .map(salvo -> new LinkedHashMap<String, Object>() {{
+                    put("turn", salvo.getTurn());
+                    put("player", salvo.getGamePlayer().getPlayer().getId());
+                    put("locations", salvo.getLocations());
+                }}).collect(toList());
     }
 
     private List<Map<String, Object>> buildSalvoes(Set<GamePlayer> gps){
@@ -290,7 +317,7 @@ public class SalvoController {
     }
 
     private ResponseEntity<Map<String, Object>> saveShips(List<Ship> ships, GamePlayer gp){
-        if (gp.getShips().size() > 0) return getForbiddenResponse("User already has ships placed");
+        if (!gp.getShips().isEmpty()) return getForbiddenResponse("User already has ships placed");
 
         ships.forEach(ship -> {
             ship.setGamePlayer(gp);
@@ -298,5 +325,56 @@ public class SalvoController {
         });
 
         return getCreatedResponse("Ships placed!");
+    }
+
+    @RequestMapping(value = "/games/players/{gpId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> fireSalvo(@PathVariable Long gpId, @RequestBody Salvo salvo, Authentication auth){
+        return getPlayerOpt(auth)
+                .map(player -> gamePlayerRepo.findById(gpId)
+                        .map(gp -> gp.getPlayer().equals(player)
+                                ? saveSalvo(salvo, gp)
+                                : getUnauthorizedResponse("The current user is not the game player the ID references")
+                        ).orElseGet(() -> getUnauthorizedResponse("There is no game player with the given ID"))
+                ).orElseGet(() -> getUnauthorizedResponse("There is no current user logged in"));
+    }
+
+    private ResponseEntity<Map<String, Object>> saveSalvo(Salvo salvo, GamePlayer gp){
+        salvo.setTurn((gp.getSalvoes().size()) + 1);
+        if (gp.getSalvoes().stream()
+                .filter(s -> s.getTurn().equals(salvo.getTurn()))
+                .collect(toList())
+                .isEmpty()){
+            gp.addSalvo(salvo);
+            save(salvo);
+            return getCreatedResponse("Salvo fired!");
+        }
+        return getForbiddenResponse("User has already fired a salvo in this turn");
+
+        /*return gp.getGame().getGamePlayers()
+                .stream()
+                .filter(gamePlayer -> !gamePlayer.equals(gp))
+                .findFirst()
+                .map(gamePlayer -> {
+                    salvo.setTurn((gamePlayer.getSalvoes().size()) + 1);
+                    if (gamePlayer.getSalvoes().stream()
+                            .filter(s -> s.getTurn().equals(salvo.getTurn()))
+                            .collect(toList())
+                            .isEmpty()){
+                        salvo.setGamePlayer(gamePlayer);
+                        salvoRepo.save(salvo);
+                        return getCreatedResponse("Salvo fired!");
+                    }
+                        return getForbiddenResponse("User has already fired a salvo in this turn");
+                }).orElse(getForbiddenResponse("You don't have an Oponent"));*/
+    }
+
+    private void save(Salvo salvo) {
+        salvoRepo.save(salvo);
+    }
+
+    private void jorge(){
+        new ResponseEntity<Object>(new HashMap<String, Object>(){{
+            put("gpid", 2);
+        }}, HttpStatus.CREATED);
     }
 }
